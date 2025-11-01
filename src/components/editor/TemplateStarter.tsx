@@ -111,7 +111,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               <span>Ask AI</span>
             </div>
             <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
-              {parseShortcut("⌘⇧A")}
+              {parseShortcut("⌘⇧J")}
             </span>
           </button>
 
@@ -132,7 +132,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               <span>Make Research</span>
             </div>
             <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
-              {parseShortcut("⌘⇧R")}
+              {parseShortcut("⌘⇧M")}
             </span>
           </button>
 
@@ -153,7 +153,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               <span>Create To-Do List</span>
             </div>
             <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
-              {parseShortcut("⌘⇧T")}
+              {parseShortcut("⌘⇧D")}
             </span>
           </button>
         </div>

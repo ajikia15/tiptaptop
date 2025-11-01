@@ -290,13 +290,6 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     },
   });
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      editor?.destroy();
-    };
-  }, [editor]);
-
   // Handler for Ask AI button
   const handleAskAI = useCallback(() => {
     if (editor) {
@@ -316,6 +309,74 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     if (editor) {
       editor.commands.insertTodoList();
     }
+  }, [editor]);
+
+  // Keyboard shortcuts for AI prompts
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if typing in an input/textarea
+      const target = e.target as HTMLElement;
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      // Skip if in the document title
+      if (target.closest(".document-title-wrapper")) {
+        return;
+      }
+
+      // Allow shortcuts in the editor (which is contentEditable)
+
+      // Ask AI: Ctrl/Cmd + Shift + J
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "j"
+      ) {
+        e.preventDefault();
+        handleAskAI();
+        return;
+      }
+
+      // Make Research: Ctrl/Cmd + Shift + M
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "m"
+      ) {
+        e.preventDefault();
+        handleMakeResearch();
+        return;
+      }
+
+      // Create Todo: Ctrl/Cmd + Shift + D
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "d"
+      ) {
+        e.preventDefault();
+        handleCreateTodo();
+        return;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [editor, handleAskAI, handleMakeResearch, handleCreateTodo]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      editor?.destroy();
+    };
   }, [editor]);
 
   // Handler for Templates button

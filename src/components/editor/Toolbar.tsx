@@ -45,7 +45,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
 
   // Helper function to detect Mac
   const isMac = () => {
-    return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    return (
+      typeof window !== "undefined" &&
+      window.navigator.platform.toUpperCase().indexOf("MAC") >= 0
+    );
   };
 
   // Keyboard shortcut handler
@@ -138,7 +141,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
           className="toolbar-toggle"
           aria-label="Toggle command menu"
           onClick={() => setOpen(true)}
-          style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
+          style={{ fontFamily: "Inter, sans-serif", fontWeight: 500 }}
         >
           <KbdGroup>
             {isMac() ? (
@@ -168,14 +171,23 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
             <CommandItem onSelect={handleAskAI}>
               <AskAIIcon className="w-4 h-4" />
               <span>Ask AI</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⇧J" : "Ctrl+Shift+J"}
+              </CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={handleMakeResearch}>
               <MakeResearchIcon className="w-4 h-4" />
               <span>Make Research</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⇧M" : "Ctrl+Shift+M"}
+              </CommandShortcut>
             </CommandItem>
             <CommandItem onSelect={handleCreateTodo}>
               <TodoListIcon className="w-4 h-4" />
               <span>Create To-Do List</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⇧D" : "Ctrl+Shift+D"}
+              </CommandShortcut>
             </CommandItem>
           </CommandGroup>
 
@@ -184,25 +196,39 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
           {/* Formatting */}
           <CommandGroup heading="Formatting">
             <CommandItem
-              onSelect={() => editor.chain().focus().toggleBold().run()}
+              onSelect={() => {
+                editor.chain().focus().setParagraph().run();
+                setOpen(false);
+              }}
+            >
+              <span style={{ fontFamily: "Inter" }}>¶</span>
+              <span>Paragraph</span>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => {
+                editor.chain().focus().toggleBold().run();
+                setOpen(false);
+              }}
             >
               <Bold />
               <span>Bold</span>
-              <CommandShortcut>
-                {isMac() ? "⌘B" : "Ctrl+B"}
-              </CommandShortcut>
+              <CommandShortcut>{isMac() ? "⌘B" : "Ctrl+B"}</CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() => editor.chain().focus().toggleItalic().run()}
+              onSelect={() => {
+                editor.chain().focus().toggleItalic().run();
+                setOpen(false);
+              }}
             >
               <Italic />
               <span>Italic</span>
-              <CommandShortcut>
-                {isMac() ? "⌘I" : "Ctrl+I"}
-              </CommandShortcut>
+              <CommandShortcut>{isMac() ? "⌘I" : "Ctrl+I"}</CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() => editor.chain().focus().toggleStrike().run()}
+              onSelect={() => {
+                editor.chain().focus().toggleStrike().run();
+                setOpen(false);
+              }}
             >
               <Strikethrough />
               <span>Strikethrough</span>
@@ -211,18 +237,20 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
               </CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() => editor.chain().focus().toggleCode().run()}
+              onSelect={() => {
+                editor.chain().focus().toggleCode().run();
+                setOpen(false);
+              }}
             >
               <Code />
               <span>Code</span>
-              <CommandShortcut>
-                {isMac() ? "⌘E" : "Ctrl+E"}
-              </CommandShortcut>
+              <CommandShortcut>{isMac() ? "⌘E" : "Ctrl+E"}</CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() =>
-                editor.chain().focus().toggleHeading({ level: 1 }).run()
-              }
+              onSelect={() => {
+                editor.chain().focus().toggleHeading({ level: 1 }).run();
+                setOpen(false);
+              }}
             >
               <Heading1 />
               <span>Heading 1</span>
@@ -231,9 +259,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
               </CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() =>
-                editor.chain().focus().toggleHeading({ level: 2 }).run()
-              }
+              onSelect={() => {
+                editor.chain().focus().toggleHeading({ level: 2 }).run();
+                setOpen(false);
+              }}
             >
               <Heading2 />
               <span>Heading 2</span>
@@ -242,9 +271,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
               </CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() =>
-                editor.chain().focus().toggleHeading({ level: 3 }).run()
-              }
+              onSelect={() => {
+                editor.chain().focus().toggleHeading({ level: 3 }).run();
+                setOpen(false);
+              }}
             >
               <Heading3 />
               <span>Heading 3</span>
@@ -253,7 +283,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
               </CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() => editor.chain().focus().toggleBulletList().run()}
+              onSelect={() => {
+                editor.chain().focus().toggleBulletList().run();
+                setOpen(false);
+              }}
             >
               <List />
               <span>Bullet List</span>
@@ -262,7 +295,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
               </CommandShortcut>
             </CommandItem>
             <CommandItem
-              onSelect={() => editor.chain().focus().toggleOrderedList().run()}
+              onSelect={() => {
+                editor.chain().focus().toggleOrderedList().run();
+                setOpen(false);
+              }}
             >
               <ListOrdered />
               <span>Numbered List</span>
@@ -277,28 +313,47 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
           {/* Other options */}
           <CommandGroup heading="Other options">
             <CommandItem
-              onSelect={() => handleInsertTemplate("brief")}
+              onSelect={() => {
+                handleInsertTemplate("brief");
+                setOpen(false);
+              }}
             >
               <TemplatesIcon className="w-4 h-4" />
               <span>Project Brief Template</span>
             </CommandItem>
             <CommandItem
-              onSelect={() => handleInsertTemplate("outline")}
+              onSelect={() => {
+                handleInsertTemplate("outline");
+                setOpen(false);
+              }}
             >
               <TemplatesIcon className="w-4 h-4" />
               <span>Document Outline Template</span>
             </CommandItem>
             <CommandItem
-              onSelect={() => handleInsertTemplate("notes")}
+              onSelect={() => {
+                handleInsertTemplate("notes");
+                setOpen(false);
+              }}
             >
               <TemplatesIcon className="w-4 h-4" />
               <span>Meeting Notes Template</span>
             </CommandItem>
-            <CommandItem onSelect={handleImportClick}>
+            <CommandItem
+              onSelect={() => {
+                handleImportClick();
+                setOpen(false);
+              }}
+            >
               <ImportIcon className="w-4 h-4" />
               <span>Import Document</span>
             </CommandItem>
-            <CommandItem onSelect={handleImportImageClick}>
+            <CommandItem
+              onSelect={() => {
+                handleImportImageClick();
+                setOpen(false);
+              }}
+            >
               <ImportImageIcon className="w-4 h-4" />
               <span>Import Image</span>
             </CommandItem>
