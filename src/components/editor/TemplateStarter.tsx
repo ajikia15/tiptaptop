@@ -8,6 +8,7 @@ import {
   ImportIcon,
   ImportImageIcon,
 } from "@/components/ui/icon";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
 interface TemplateStarterProps {
   editor: Editor;
@@ -27,9 +28,61 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
   onImport,
   onImportImage,
 }) => {
+  // Helper function to detect Mac
+  const isMac = () => {
+    return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+  };
+
+  const parseShortcut = (shortcut: string): React.ReactNode => {
+    // Split shortcut into individual keys (handles Mac symbols and regular keys)
+    const keys: string[] = [];
+    let currentKey = '';
+    
+    for (let i = 0; i < shortcut.length; i++) {
+      const char = shortcut[i];
+      if (char === '⌘' || char === '⌥' || char === '⇧') {
+        if (currentKey) {
+          keys.push(currentKey);
+          currentKey = '';
+        }
+        keys.push(char);
+      } else if (char === '+' || char === ' ') {
+        if (currentKey) {
+          keys.push(currentKey);
+          currentKey = '';
+        }
+        // Skip separator characters
+      } else {
+        currentKey += char;
+      }
+    }
+    
+    if (currentKey) {
+      keys.push(currentKey);
+    }
+    
+    return (
+      <KbdGroup>
+        {keys.map((key, index) => {
+          const needsSeparator = index < keys.length - 1;
+          const displayKey = isMac() 
+            ? key 
+            : key.replace(/⌘/g, "Ctrl").replace(/⌥/g, "Alt").replace(/⇧/g, "Shift");
+          
+          return (
+            <React.Fragment key={index}>
+              <Kbd>{displayKey}</Kbd>
+              {needsSeparator && <span className="mx-0.5 text-muted-foreground">+</span>}
+            </React.Fragment>
+          );
+        })}
+      </KbdGroup>
+    );
+  };
+
   return (
     <div className="action-list-wrapper">
-      <div className="flex flex-col gap-4 max-w-xs">
+      <div className="flex flex-col gap-4 max-w-md">
         {/* AI Prompts & shortcuts */}
         <div className="flex flex-col gap-1">
           <div 
@@ -43,7 +96,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
           </div>
           <button
             onClick={onAskAI}
-            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="group flex items-center justify-between gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             style={{
               fontFamily: 'Inter',
               fontWeight: 500,
@@ -53,13 +106,18 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <AskAIIcon className="w-4 h-4" />
-            <span>Ask AI</span>
+            <div className="flex items-center gap-3">
+              <AskAIIcon className="w-4 h-4" />
+              <span>Ask AI</span>
+            </div>
+            <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
+              {parseShortcut("⌘⇧A")}
+            </span>
           </button>
 
           <button
             onClick={onMakeResearch}
-            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="group flex items-center justify-between gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             style={{
               fontFamily: 'Inter',
               fontWeight: 500,
@@ -69,13 +127,18 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <MakeResearchIcon className="w-4 h-4" />
-            <span>Make Research</span>
+            <div className="flex items-center gap-3">
+              <MakeResearchIcon className="w-4 h-4" />
+              <span>Make Research</span>
+            </div>
+            <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
+              {parseShortcut("⌘⇧R")}
+            </span>
           </button>
 
           <button
             onClick={onCreateTodo}
-            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="group flex items-center justify-between gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             style={{
               fontFamily: 'Inter',
               fontWeight: 500,
@@ -85,8 +148,13 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <TodoListIcon className="w-4 h-4" />
-            <span>Create To-Do List</span>
+            <div className="flex items-center gap-3">
+              <TodoListIcon className="w-4 h-4" />
+              <span>Create To-Do List</span>
+            </div>
+            <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
+              {parseShortcut("⌘⇧T")}
+            </span>
           </button>
         </div>
 
@@ -103,7 +171,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
           </div>
           <button
             onClick={onTemplates}
-            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="group flex items-center justify-between gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             style={{
               fontFamily: 'Inter',
               fontWeight: 500,
@@ -113,13 +181,15 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <TemplatesIcon className="w-4 h-4" />
-            <span>Templates</span>
+            <div className="flex items-center gap-3">
+              <TemplatesIcon className="w-4 h-4" />
+              <span>Templates</span>
+            </div>
           </button>
 
           <button
             onClick={onImport}
-            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="group flex items-center justify-between gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             style={{
               fontFamily: 'Inter',
               fontWeight: 500,
@@ -129,13 +199,15 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <ImportIcon className="w-4 h-4" />
-            <span>Import</span>
+            <div className="flex items-center gap-3">
+              <ImportIcon className="w-4 h-4" />
+              <span>Import</span>
+            </div>
           </button>
 
           <button
             onClick={onImportImage}
-            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            className="group flex items-center justify-between gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             style={{
               fontFamily: 'Inter',
               fontWeight: 500,
@@ -145,8 +217,10 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <ImportImageIcon className="w-4 h-4" />
-            <span>Import Image</span>
+            <div className="flex items-center gap-3">
+              <ImportImageIcon className="w-4 h-4" />
+              <span>Import Image</span>
+            </div>
           </button>
         </div>
       </div>

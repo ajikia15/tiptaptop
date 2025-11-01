@@ -103,7 +103,8 @@
     letter-spacing: 0;
     
     &.is-editor-empty:first-child::before {
-      color: hsl(var(--muted-foreground));
+      color: hsl(var(--muted-foreground)) !important;
+      opacity: 0.5 !important;
       content: attr(data-placeholder);
       float: left;
       height: 0;
@@ -309,6 +310,28 @@ body.is-dragging .tippy-box {
 /* Document Title */
 .document-title-wrapper {
   padding: 2rem 0 1rem 2.25rem; /* Match editor content padding for drag handle alignment */
+  
+  > div {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    font-style: normal;
+    line-height: 1.25;
+    letter-spacing: 0.1px;
+    vertical-align: middle;
+    margin: 0;
+    cursor: text;
+    
+    &:focus {
+      outline: none;
+    }
+    
+    &[contenteditable="true"]:empty:before {
+      content: attr(data-placeholder);
+      color: hsl(var(--muted-foreground) / 0.5);
+      pointer-events: none;
+    }
+  }
   
   h1 {
     font-family: 'Inter', sans-serif;

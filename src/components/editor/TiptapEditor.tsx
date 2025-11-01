@@ -53,6 +53,8 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
   autoFocus = true,
   onUpdate,
 }) => {
+  const titleRef = React.useRef<HTMLDivElement>(null);
+
   // Create debounced logger
   const debouncedLog = useMemo(
     () =>
@@ -398,7 +400,44 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     <div className="editor-container">
       <Toolbar editor={editor} onImport={handleToolbarImport} />
       <div className="document-title-wrapper">
-        <h1 className="text-4xl font-bold text-gray-900">Untitled doc</h1>
+        <div
+          ref={titleRef}
+          contentEditable
+          suppressContentEditableWarning
+          className="text-4xl font-bold text-gray-900 outline-none border-none focus:outline-none"
+          onInput={(e) => {
+            const target = e.currentTarget;
+            // Remove the placeholder when user types
+            if (
+              target.textContent &&
+              !target.classList.contains("has-content")
+            ) {
+              target.classList.add("has-content");
+            }
+          }}
+          onBlur={(e) => {
+            const target = e.currentTarget;
+            if (!target.textContent || target.textContent.trim() === "") {
+              target.textContent = "";
+              target.classList.remove("has-content");
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              editor?.commands.focus();
+            }
+          }}
+          style={{
+            fontFamily: "Inter, sans-serif",
+            fontSize: "28px",
+            fontWeight: 700,
+            lineHeight: 1.25,
+            letterSpacing: "0.1px",
+            minHeight: "1.25em",
+          }}
+          data-placeholder="Untitled doc"
+        />
       </div>
       <div className="tiptap-editor-wrapper">
         <EditorContent editor={editor} />

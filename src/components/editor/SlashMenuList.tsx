@@ -1,11 +1,11 @@
-import {
+import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
   useState,
 } from 'react';
 import { SlashCommandItem } from '@/extensions/slash/SlashCommandExtension';
-import { CommandShortcut } from '@/components/ui/command';
+import { Kbd, KbdGroup } from '@/components/ui/kbd';
 
 export interface SlashMenuListProps {
   items: SlashCommandItem[];
@@ -25,16 +25,53 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
       return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
     };
 
-    const formatShortcut = (shortcut?: string): string | undefined => {
-      if (!shortcut) return undefined;
-      if (isMac()) {
-        return shortcut; // Already Mac format
+    const parseShortcut = (shortcut?: string): React.ReactNode | null => {
+      if (!shortcut) return null;
+      
+      // Split shortcut into individual keys (handles Mac symbols and regular keys)
+      const keys: string[] = [];
+      let currentKey = '';
+      
+      for (let i = 0; i < shortcut.length; i++) {
+        const char = shortcut[i];
+        if (char === '⌘' || char === '⌥' || char === '⇧') {
+          if (currentKey) {
+            keys.push(currentKey);
+            currentKey = '';
+          }
+          keys.push(char);
+        } else if (char === '+' || char === ' ') {
+          if (currentKey) {
+            keys.push(currentKey);
+            currentKey = '';
+          }
+          // Skip separator characters
+        } else {
+          currentKey += char;
+        }
       }
-      // Convert Mac symbols to Windows/Linux format
-      return shortcut
-        .replace(/⌘/g, "Ctrl")
-        .replace(/⌥/g, "Alt")
-        .replace(/⇧/g, "Shift");
+      
+      if (currentKey) {
+        keys.push(currentKey);
+      }
+      
+      return (
+        <KbdGroup>
+          {keys.map((key, index) => {
+            const needsSeparator = index < keys.length - 1;
+            const displayKey = isMac() 
+              ? key 
+              : key.replace(/⌘/g, "Ctrl").replace(/⌥/g, "Alt").replace(/⇧/g, "Shift");
+            
+            return (
+              <React.Fragment key={index}>
+                <Kbd>{displayKey}</Kbd>
+                {needsSeparator && <span className="mx-0.5 text-muted-foreground">+</span>}
+              </React.Fragment>
+            );
+          })}
+        </KbdGroup>
+      );
     };
 
     const selectItem = (index: number) => {
@@ -94,7 +131,7 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
 
     return (
       <div 
-        className="rounded-md border bg-popover text-popover-foreground shadow-md p-2 min-w-[280px]"
+        className="rounded-md border bg-popover text-popover-foreground shadow-md p-2 min-w-[360px]"
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
         {props.items.map((item, index) => (
@@ -110,7 +147,7 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
             <span className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-foreground font-semibold shrink-0">
               {item.icon}
             </span>
-            <div className="flex flex-col gap-0.5 flex-1">
+            <div className="flex flex-col gap-0.5 flex-1 min-w-0">
               <div 
                 className="text-sm font-medium"
                 style={{ 
@@ -125,7 +162,9 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
               <div className="text-xs text-muted-foreground">{item.description}</div>
             </div>
             {item.shortcut && (
-              <CommandShortcut>{formatShortcut(item.shortcut)}</CommandShortcut>
+              <div className="ml-auto shrink-0">
+                {parseShortcut(item.shortcut)}
+              </div>
             )}
           </button>
         ))}
