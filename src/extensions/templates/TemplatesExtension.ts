@@ -1,16 +1,16 @@
-import { Extension } from '@tiptap/core';
-import { z } from 'zod';
-import templateBrief from '@/templates/template-brief.json';
-import templateOutline from '@/templates/template-outline.json';
-import templateNotes from '@/templates/template-notes.json';
+import { Extension } from "@tiptap/core";
+import { z } from "zod";
+import templateBrief from "@/templates/template-brief.json";
+import templateOutline from "@/templates/template-outline.json";
+import templateNotes from "@/templates/template-notes.json";
 
 // Zod schema for validating template structure
 const TemplateSchema = z.object({
-  type: z.literal('doc'),
+  type: z.literal("doc"),
   content: z.array(z.any()),
 });
 
-export type TemplateName = 'brief' | 'outline' | 'notes';
+export type TemplateName = "brief" | "outline" | "notes";
 
 const templates: Record<TemplateName, any> = {
   brief: templateBrief,
@@ -18,22 +18,16 @@ const templates: Record<TemplateName, any> = {
   notes: templateNotes,
 };
 
-declare module '@tiptap/core' {
+declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     templates: {
-      /**
-       * Insert a template
-       */
       insertTemplate: (templateName: TemplateName) => ReturnType;
     };
   }
 }
 
-/**
- * Custom extension that adds template insertion functionality
- */
 export const TemplatesExtension = Extension.create({
-  name: 'templates',
+  name: "templates",
 
   addCommands() {
     return {
@@ -42,29 +36,27 @@ export const TemplatesExtension = Extension.create({
         ({ chain, editor }) => {
           try {
             const template = templates[templateName];
-            
+
             if (!template) {
               console.error(`Template "${templateName}" not found`);
               return false;
             }
 
-            // Validate template
             const validatedTemplate = TemplateSchema.parse(template);
 
-            // Clear current content and insert template
             chain()
               .clearContent()
               .insertContent(validatedTemplate.content)
               .run();
-            
+
             // Focus at the beginning of the document
             setTimeout(() => {
-              editor.commands.focus('start');
+              editor.commands.focus("start");
             }, 10);
 
             return true;
           } catch (error) {
-            console.error('Error inserting template:', error);
+            console.error("Error inserting template:", error);
             return false;
           }
         },
@@ -73,4 +65,3 @@ export const TemplatesExtension = Extension.create({
 });
 
 export { templates };
-

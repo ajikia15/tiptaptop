@@ -10,6 +10,22 @@
   outline: none;
   min-height: 200px;
   padding: 1rem 0;
+  /* Left gutter so the drag handle remains reachable when moving cursor left */
+  > * {
+    position: relative;
+    padding-left: 2.25rem; /* ~36px gutter */
+  }
+
+  /* Keep list indentation while preserving gutter at top level */
+  > ul,
+  > ol {
+    padding-left: calc(2.25rem + 1.5rem);
+  }
+
+  /* Blockquote already has left padding; add gutter on top */
+  > blockquote {
+    padding-left: calc(2.25rem + 1rem);
+  }
   
   /* Prose styling */
   > * + * {
@@ -185,6 +201,24 @@
 
 .tippy-arrow {
   display: none !important;
+}
+
+/* Drag handle styles (Notion-like) */
+.drag-handle {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827; /* black-ish */
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.drag-handle:hover {
+  background: #f3f4f6;
 }
 
 /* Document Title */
