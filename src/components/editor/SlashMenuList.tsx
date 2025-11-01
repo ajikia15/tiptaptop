@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import { SlashCommandItem } from '@/extensions/slash/SlashCommandExtension';
-import { Kbd, KbdGroup } from '@/components/ui/kbd';
+import { KeyboardShortcut } from '@/components/ui/keyboard-shortcut';
 
 export interface SlashMenuListProps {
   items: SlashCommandItem[];
@@ -19,60 +19,6 @@ export interface SlashMenuListRef {
 export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
   (props, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
-
-    // Helper to detect Mac and convert shortcuts
-    const isMac = () => {
-      return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-    };
-
-    const parseShortcut = (shortcut?: string): React.ReactNode | null => {
-      if (!shortcut) return null;
-      
-      // Split shortcut into individual keys (handles Mac symbols and regular keys)
-      const keys: string[] = [];
-      let currentKey = '';
-      
-      for (let i = 0; i < shortcut.length; i++) {
-        const char = shortcut[i];
-        if (char === '⌘' || char === '⌥' || char === '⇧') {
-          if (currentKey) {
-            keys.push(currentKey);
-            currentKey = '';
-          }
-          keys.push(char);
-        } else if (char === '+' || char === ' ') {
-          if (currentKey) {
-            keys.push(currentKey);
-            currentKey = '';
-          }
-          // Skip separator characters
-        } else {
-          currentKey += char;
-        }
-      }
-      
-      if (currentKey) {
-        keys.push(currentKey);
-      }
-      
-      return (
-        <KbdGroup>
-          {keys.map((key, index) => {
-            const needsSeparator = index < keys.length - 1;
-            const displayKey = isMac() 
-              ? key 
-              : key.replace(/⌘/g, "Ctrl").replace(/⌥/g, "Alt").replace(/⇧/g, "Shift");
-            
-            return (
-              <React.Fragment key={index}>
-                <Kbd>{displayKey}</Kbd>
-                {needsSeparator && <span className="mx-0.5 text-muted-foreground">+</span>}
-              </React.Fragment>
-            );
-          })}
-        </KbdGroup>
-      );
-    };
 
     const selectItem = (index: number) => {
       const item = props.items[index];
@@ -163,7 +109,7 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
             </div>
             {item.shortcut && (
               <div className="ml-auto shrink-0">
-                {parseShortcut(item.shortcut)}
+                <KeyboardShortcut shortcut={item.shortcut} />
               </div>
             )}
           </button>

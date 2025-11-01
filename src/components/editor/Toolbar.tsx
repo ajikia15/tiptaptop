@@ -32,6 +32,8 @@ import {
   ImportImageIcon,
 } from "@/components/ui/icon";
 import { TemplateName } from "@/extensions/templates/TemplatesExtension";
+import { isMac } from "@/lib/utils";
+import { shouldIgnoreKeyboardShortcut } from "@/lib/keyboardUtils";
 
 interface ToolbarProps {
   editor: Editor;
@@ -43,14 +45,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
   const imageInputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
 
-  // Helper function to detect Mac
-  const isMac = () => {
-    return (
-      typeof window !== "undefined" &&
-      window.navigator.platform.toUpperCase().indexOf("MAC") >= 0
-    );
-  };
-
   // Keyboard shortcut handler
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -59,8 +53,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
       if (
         e.key === "k" &&
         (e.metaKey || e.ctrlKey) &&
-        !(e.target instanceof HTMLInputElement) &&
-        !(e.target instanceof HTMLTextAreaElement)
+        !shouldIgnoreKeyboardShortcut(e.target)
       ) {
         e.preventDefault();
         setOpen((open) => !open);

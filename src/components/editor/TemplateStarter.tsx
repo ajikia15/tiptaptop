@@ -8,7 +8,7 @@ import {
   ImportIcon,
   ImportImageIcon,
 } from "@/components/ui/icon";
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
+import { KeyboardShortcut } from "@/components/ui/keyboard-shortcut";
 
 interface TemplateStarterProps {
   editor: Editor;
@@ -28,57 +28,6 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
   onImport,
   onImportImage,
 }) => {
-  // Helper function to detect Mac
-  const isMac = () => {
-    return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
-  };
-
-  const parseShortcut = (shortcut: string): React.ReactNode => {
-    // Split shortcut into individual keys (handles Mac symbols and regular keys)
-    const keys: string[] = [];
-    let currentKey = '';
-    
-    for (let i = 0; i < shortcut.length; i++) {
-      const char = shortcut[i];
-      if (char === '⌘' || char === '⌥' || char === '⇧') {
-        if (currentKey) {
-          keys.push(currentKey);
-          currentKey = '';
-        }
-        keys.push(char);
-      } else if (char === '+' || char === ' ') {
-        if (currentKey) {
-          keys.push(currentKey);
-          currentKey = '';
-        }
-        // Skip separator characters
-      } else {
-        currentKey += char;
-      }
-    }
-    
-    if (currentKey) {
-      keys.push(currentKey);
-    }
-    
-    return (
-      <KbdGroup>
-        {keys.map((key, index) => {
-          const needsSeparator = index < keys.length - 1;
-          const displayKey = isMac() 
-            ? key 
-            : key.replace(/⌘/g, "Ctrl").replace(/⌥/g, "Alt").replace(/⇧/g, "Shift");
-          
-          return (
-            <React.Fragment key={index}>
-              <Kbd>{displayKey}</Kbd>
-              {needsSeparator && <span className="mx-0.5 text-muted-foreground">+</span>}
-            </React.Fragment>
-          );
-        })}
-      </KbdGroup>
-    );
-  };
 
   return (
     <div className="action-list-wrapper">
@@ -111,7 +60,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               <span>Ask AI</span>
             </div>
             <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
-              {parseShortcut("⌘⇧J")}
+              <KeyboardShortcut shortcut="⌘⇧J" />
             </span>
           </button>
 
@@ -132,7 +81,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               <span>Make Research</span>
             </div>
             <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
-              {parseShortcut("⌘⇧M")}
+              <KeyboardShortcut shortcut="⌘⇧M" />
             </span>
           </button>
 
@@ -153,7 +102,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               <span>Create To-Do List</span>
             </div>
             <span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
-              {parseShortcut("⌘⇧D")}
+              <KeyboardShortcut shortcut="⌘⇧D" />
             </span>
           </button>
         </div>

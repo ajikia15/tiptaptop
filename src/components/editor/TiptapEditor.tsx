@@ -16,6 +16,8 @@ import { SlashCommandExtension } from "@/extensions/slash/SlashCommandExtension"
 import { SmartPlaceholder } from "@/extensions/placeholder/SmartPlaceholder";
 import { debounce, logEditorContent } from "@/lib/editorUtils";
 import { importDocument } from "@/lib/documentParser";
+import { fileToBase64, isImageFile, isModifierKey } from "@/lib/utils";
+import { shouldIgnoreKeyboardShortcut } from "@/lib/keyboardUtils";
 import "@/styles/editor.scss";
 import "tippy.js/dist/tippy.css";
 
@@ -23,29 +25,6 @@ interface TiptapEditorProps {
   initialContent?: string;
   autoFocus?: boolean;
   onUpdate?: (editor: Editor) => void;
-}
-
-/**
- * Convert file to base64 data URL
- */
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      resolve(reader.result as string);
-    };
-    reader.onerror = () => {
-      reject(new Error("Failed to read file"));
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-/**
- * Check if file is an image
- */
-function isImageFile(file: File): boolean {
-  return file.type.startsWith("image/");
 }
 
 export const TiptapEditor: React.FC<TiptapEditorProps> = ({
@@ -166,7 +145,9 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
           // Check if dropped items are files (e.g., images)
           const files = dragEvent.dataTransfer?.files;
           if (files && files.length > 0 && editor) {
-            const imageFiles = Array.from(files).filter(isImageFile);
+            const imageFiles = Array.from(files).filter((file) =>
+              isImageFile(file)
+            );
 
             if (imageFiles.length > 0) {
               // Handle image drops
@@ -316,50 +297,27 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     if (!editor) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if typing in an input/textarea
-      const target = e.target as HTMLElement;
-      if (
-        target instanceof HTMLInputElement ||
-        target instanceof HTMLTextAreaElement
-      ) {
+      // Skip if typing in an input/textarea or title field
+      if (shouldIgnoreKeyboardShortcut(e.target)) {
         return;
       }
-
-      // Skip if in the document title
-      if (target.closest(".document-title-wrapper")) {
-        return;
-      }
-
-      // Allow shortcuts in the editor (which is contentEditable)
 
       // Ask AI: Ctrl/Cmd + Shift + J
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "j"
-      ) {
+      if (isModifierKey(e, "j", { shift: true })) {
         e.preventDefault();
         handleAskAI();
         return;
       }
 
       // Make Research: Ctrl/Cmd + Shift + M
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "m"
-      ) {
+      if (isModifierKey(e, "m", { shift: true })) {
         e.preventDefault();
         handleMakeResearch();
         return;
       }
 
       // Create Todo: Ctrl/Cmd + Shift + D
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "d"
-      ) {
+      if (isModifierKey(e, "d", { shift: true })) {
         e.preventDefault();
         handleCreateTodo();
         return;
