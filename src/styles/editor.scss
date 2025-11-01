@@ -299,6 +299,13 @@ body.is-dragging .tippy-box {
   background: #f3f4f6;
 }
 
+/* Highlight for dragged block */
+.dragged-highlight {
+  background-color: rgba(59, 130, 246, 0.1) !important; /* blue-500 with 10% opacity */
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
 /* Document Title */
 .document-title-wrapper {
   padding: 2rem 0 1rem 0;

@@ -134,6 +134,37 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
           editor?.commands.unlockDragHandle();
 
+          // Highlight the dropped block
+          const targetElement = document.elementFromPoint(
+            dragEvent.clientX,
+            dragEvent.clientY
+          );
+          if (targetElement && editor) {
+            // Find the closest block element (p, h1, h2, h3, li, etc.)
+            const blockElement =
+              targetElement.closest(
+                "p, h1, h2, h3, h4, h5, h6, li, blockquote"
+              ) || targetElement.closest(".tiptap > *");
+
+            if (blockElement) {
+              blockElement.classList.add("dragged-highlight");
+
+              // Remove highlight on any click
+              const removeHighlight = () => {
+                document
+                  .querySelectorAll(".dragged-highlight")
+                  .forEach((el) => {
+                    el.classList.remove("dragged-highlight");
+                  });
+                document.removeEventListener("click", removeHighlight, true);
+              };
+              // Use capture phase to catch clicks early
+              setTimeout(() => {
+                document.addEventListener("click", removeHighlight, true);
+              }, 0);
+            }
+          }
+
           setTimeout(() => {
             const mouseEvent = new MouseEvent("mousemove", {
               bubbles: true,
