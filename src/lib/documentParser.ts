@@ -55,10 +55,24 @@ export async function parseDocxFile(file: File): Promise<string> {
           { arrayBuffer },
           {
             convertImage: mammoth.images.imgElement((image) => {
-              return image.read('buffer').then((imageBuffer) => {
+              return image.read('buffer').then((imageBuffer: any) => {
                 const contentType = image.contentType || 'image/png';
+                // Mammoth returns a Buffer in Node or ArrayBuffer/Uint8Array in browser
+                // Convert to Uint8Array if needed
+                let buffer: ArrayBuffer | Uint8Array;
+                if (imageBuffer instanceof ArrayBuffer) {
+                  buffer = imageBuffer;
+                } else if (imageBuffer instanceof Uint8Array) {
+                  buffer = imageBuffer;
+                } else if (imageBuffer?.buffer instanceof ArrayBuffer) {
+                  // Handle Buffer objects
+                  buffer = new Uint8Array(imageBuffer.buffer);
+                } else {
+                  // Fallback: try to create Uint8Array from the value
+                  buffer = new Uint8Array(imageBuffer);
+                }
                 return {
-                  src: bufferToBase64(imageBuffer, contentType),
+                  src: bufferToBase64(buffer, contentType),
                 };
               });
             }),
