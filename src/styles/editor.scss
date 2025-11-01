@@ -3,14 +3,12 @@
 .tiptap-editor-wrapper {
   position: relative;
   width: 100%;
-  min-height: 200px;
 }
 
 .tiptap {
   font-family: 'Inter', sans-serif;
   outline: none;
-  min-height: 200px;
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   /* Left gutter so the drag handle remains reachable when moving cursor left */
   > * {
     position: relative;
