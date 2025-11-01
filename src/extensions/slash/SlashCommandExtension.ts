@@ -9,6 +9,7 @@ export interface SlashCommandItem {
   title: string;
   description: string;
   icon: string;
+  shortcut?: string;
   command: ({ editor, range }: any) => void;
 }
 
@@ -30,6 +31,7 @@ export const slashCommandItems: SlashCommandItem[] = [
     title: 'Heading 1',
     description: 'Big section heading',
     icon: 'H1',
+    shortcut: '⌘⌥1',
     command: ({ editor, range }) => {
       editor
         .chain()
@@ -43,6 +45,7 @@ export const slashCommandItems: SlashCommandItem[] = [
     title: 'Heading 2',
     description: 'Medium section heading',
     icon: 'H2',
+    shortcut: '⌘⌥2',
     command: ({ editor, range }) => {
       editor
         .chain()
@@ -56,6 +59,7 @@ export const slashCommandItems: SlashCommandItem[] = [
     title: 'Heading 3',
     description: 'Small section heading',
     icon: 'H3',
+    shortcut: '⌘⌥3',
     command: ({ editor, range }) => {
       editor
         .chain()
@@ -69,6 +73,7 @@ export const slashCommandItems: SlashCommandItem[] = [
     title: 'Bullet List',
     description: 'Create a simple bullet list',
     icon: '•',
+    shortcut: '⌘⇧8',
     command: ({ editor, range }) => {
       editor
         .chain()
@@ -82,6 +87,7 @@ export const slashCommandItems: SlashCommandItem[] = [
     title: 'Numbered List',
     description: 'Create a numbered list',
     icon: '1.',
+    shortcut: '⌘⇧7',
     command: ({ editor, range }) => {
       editor
         .chain()

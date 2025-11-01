@@ -5,6 +5,7 @@ import {
   useState,
 } from 'react';
 import { SlashCommandItem } from '@/extensions/slash/SlashCommandExtension';
+import { CommandShortcut } from '@/components/ui/command';
 
 export interface SlashMenuListProps {
   items: SlashCommandItem[];
@@ -18,6 +19,23 @@ export interface SlashMenuListRef {
 export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
   (props, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
+
+    // Helper to detect Mac and convert shortcuts
+    const isMac = () => {
+      return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    };
+
+    const formatShortcut = (shortcut?: string): string | undefined => {
+      if (!shortcut) return undefined;
+      if (isMac()) {
+        return shortcut; // Already Mac format
+      }
+      // Convert Mac symbols to Windows/Linux format
+      return shortcut
+        .replace(/⌘/g, "Ctrl")
+        .replace(/⌥/g, "Alt")
+        .replace(/⇧/g, "Shift");
+    };
 
     const selectItem = (index: number) => {
       const item = props.items[index];
@@ -89,7 +107,7 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
             type="button"
             style={{ fontFamily: 'Inter, sans-serif' }}
           >
-            <span className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-foreground font-semibold flex-shrink-0">
+            <span className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-foreground font-semibold shrink-0">
               {item.icon}
             </span>
             <div className="flex flex-col gap-0.5 flex-1">
@@ -106,6 +124,9 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
               </div>
               <div className="text-xs text-muted-foreground">{item.description}</div>
             </div>
+            {item.shortcut && (
+              <CommandShortcut>{formatShortcut(item.shortcut)}</CommandShortcut>
+            )}
           </button>
         ))}
       </div>

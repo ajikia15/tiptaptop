@@ -115,11 +115,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
             {isMac() ? (
               <>
                 <Kbd>⌘</Kbd>
+                <span>+</span>
                 <Kbd>K</Kbd>
               </>
             ) : (
               <>
                 <Kbd>Ctrl</Kbd>
+                <span>+</span>
                 <Kbd>K</Kbd>
               </>
             )}
