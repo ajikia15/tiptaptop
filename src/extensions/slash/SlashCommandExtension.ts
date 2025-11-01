@@ -1,9 +1,12 @@
-import { Extension } from '@tiptap/core';
-import { ReactRenderer } from '@tiptap/react';
-import Suggestion, { SuggestionOptions } from '@tiptap/suggestion';
-import { PluginKey } from '@tiptap/pm/state';
-import tippy, { Instance as TippyInstance } from 'tippy.js';
-import { SlashMenuList, SlashMenuListRef } from '@/components/editor/SlashMenuList';
+import { Extension } from "@tiptap/core";
+import { ReactRenderer } from "@tiptap/react";
+import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
+import { PluginKey } from "@tiptap/pm/state";
+import tippy, { Instance as TippyInstance } from "tippy.js";
+import {
+  SlashMenuList,
+  SlashMenuListRef,
+} from "@/components/editor/SlashMenuList";
 
 export interface SlashCommandItem {
   title: string;
@@ -15,112 +18,92 @@ export interface SlashCommandItem {
 
 export const slashCommandItems: SlashCommandItem[] = [
   {
-    title: 'Paragraph',
-    description: 'Start writing with plain text',
-    icon: '¶',
+    title: "Paragraph",
+    description: "Start writing with plain text",
+    icon: "¶",
+    command: ({ editor, range }) => {
+      editor.chain().focus().deleteRange(range).setNode("paragraph").run();
+    },
+  },
+  {
+    title: "Heading 1",
+    description: "Big section heading",
+    icon: "H1",
+    shortcut: "⌘⌥1",
     command: ({ editor, range }) => {
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .setNode('paragraph')
+        .setNode("heading", { level: 1 })
         .run();
     },
   },
   {
-    title: 'Heading 1',
-    description: 'Big section heading',
-    icon: 'H1',
-    shortcut: '⌘⌥1',
+    title: "Heading 2",
+    description: "Medium section heading",
+    icon: "H2",
+    shortcut: "⌘⌥2",
     command: ({ editor, range }) => {
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .setNode('heading', { level: 1 })
+        .setNode("heading", { level: 2 })
         .run();
     },
   },
   {
-    title: 'Heading 2',
-    description: 'Medium section heading',
-    icon: 'H2',
-    shortcut: '⌘⌥2',
+    title: "Heading 3",
+    description: "Small section heading",
+    icon: "H3",
+    shortcut: "⌘⌥3",
     command: ({ editor, range }) => {
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .setNode('heading', { level: 2 })
+        .setNode("heading", { level: 3 })
         .run();
     },
   },
   {
-    title: 'Heading 3',
-    description: 'Small section heading',
-    icon: 'H3',
-    shortcut: '⌘⌥3',
+    title: "Bullet List",
+    description: "Create a simple bullet list",
+    icon: "•",
+    shortcut: "⌘⇧8",
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .setNode('heading', { level: 3 })
-        .run();
+      editor.chain().focus().deleteRange(range).toggleBulletList().run();
     },
   },
   {
-    title: 'Bullet List',
-    description: 'Create a simple bullet list',
-    icon: '•',
-    shortcut: '⌘⇧8',
+    title: "Numbered List",
+    description: "Create a numbered list",
+    icon: "1.",
+    shortcut: "⌘⇧7",
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .toggleBulletList()
-        .run();
+      editor.chain().focus().deleteRange(range).toggleOrderedList().run();
     },
   },
   {
-    title: 'Numbered List',
-    description: 'Create a numbered list',
-    icon: '1.',
-    shortcut: '⌘⇧7',
+    title: "To-do List",
+    description: "Track tasks with a checklist",
+    icon: "✓",
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .toggleOrderedList()
-        .run();
-    },
-  },
-  {
-    title: 'To-do List',
-    description: 'Track tasks with a checklist',
-    icon: '✓',
-    command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .toggleTaskList()
-        .run();
+      editor.chain().focus().deleteRange(range).toggleTaskList().run();
     },
   },
 ];
 
-export const SlashCommandPluginKey = new PluginKey('slashCommand');
+export const SlashCommandPluginKey = new PluginKey("slashCommand");
 
 export const SlashCommandExtension = Extension.create({
-  name: 'slashCommand',
+  name: "slashCommand",
 
   addOptions() {
     return {
       suggestion: {
-        char: '/',
+        char: "/",
         pluginKey: SlashCommandPluginKey,
         command: ({ editor, range, props }: any) => {
           props.command({ editor, range });
@@ -145,14 +128,14 @@ export const SlashCommandExtension = Extension.create({
                 return;
               }
 
-              popup = tippy('body', {
+              popup = tippy("body", {
                 getReferenceClientRect: props.clientRect,
                 appendTo: () => document.body,
                 content: component.element,
                 showOnCreate: true,
                 interactive: true,
-                trigger: 'manual',
-                placement: 'bottom-start',
+                trigger: "manual",
+                placement: "bottom-start",
               });
             },
 
@@ -169,7 +152,7 @@ export const SlashCommandExtension = Extension.create({
             },
 
             onKeyDown(props: any) {
-              if (props.event.key === 'Escape') {
+              if (props.event.key === "Escape") {
                 popup?.[0]?.hide();
                 return true;
               }
@@ -196,4 +179,3 @@ export const SlashCommandExtension = Extension.create({
     ];
   },
 });
-

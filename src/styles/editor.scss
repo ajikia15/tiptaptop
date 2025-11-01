@@ -308,7 +308,7 @@ body.is-dragging .tippy-box {
 
 /* Document Title */
 .document-title-wrapper {
-  padding: 2rem 0 1rem 0;
+  padding: 2rem 0 1rem 2.25rem; /* Match editor content padding for drag handle alignment */
   
   h1 {
     font-family: 'Inter', sans-serif;
@@ -324,7 +324,7 @@ body.is-dragging .tippy-box {
 
 /* Action List */
 .action-list-wrapper {
-  padding: 2rem 0;
+  padding: 2rem 0 2rem 2.25rem; /* Match editor content padding for drag handle alignment */
   margin-top: 1rem;
 }
 
