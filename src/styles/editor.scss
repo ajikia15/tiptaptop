@@ -385,3 +385,17 @@ body.is-dragging .tippy-box {
   background: hsl(var(--muted-foreground) / 0.5);
 }
 
+// Image styling
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 1rem 0;
+  display: block;
+  
+  &.ProseMirror-selectednode {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+

@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
+import Image from "@tiptap/extension-image";
 import { Editor } from "@tiptap/core";
 import { Toolbar } from "./Toolbar";
 import DragHandle from "@tiptap/extension-drag-handle";
@@ -24,6 +25,29 @@ interface TiptapEditorProps {
   onUpdate?: (editor: Editor) => void;
 }
 
+/**
+ * Convert file to base64 data URL
+ */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = () => {
+      reject(new Error("Failed to read file"));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Check if file is an image
+ */
+function isImageFile(file: File): boolean {
+  return file.type.startsWith("image/");
+}
+
 export const TiptapEditor: React.FC<TiptapEditorProps> = ({
   initialContent,
   autoFocus = true,
@@ -42,6 +66,10 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+      }),
       TaskList,
       TaskItem.configure({
         nested: true,
@@ -50,7 +78,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
         render: () => {
           const element = document.createElement("div");
           element.classList.add("drag-handle");
-          // simple grip icon using inline SVG for crisp rendering
+          // grip icon
           element.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="9" cy="7" r="1.5" fill="currentColor"/>
@@ -65,8 +93,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
         },
         tippyOptions: {
           placement: "left",
-          // Negative distance pulls the handle inside the block
-          // so it sits within the left padding (gutter)
+          // Gutter for drag handle
           offset: [0, -20],
         },
       }),
@@ -134,7 +161,45 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
 
           editor?.commands.unlockDragHandle();
 
-          // Highlight the dropped block
+          // Check if dropped items are files (e.g., images)
+          const files = dragEvent.dataTransfer?.files;
+          if (files && files.length > 0 && editor) {
+            const imageFiles = Array.from(files).filter(isImageFile);
+
+            if (imageFiles.length > 0) {
+              // Handle image drops
+              event.preventDefault();
+
+              // Get drop position
+              const coordinates = editor.view.posAtCoords({
+                left: dragEvent.clientX,
+                top: dragEvent.clientY,
+              });
+
+              // Insert images at drop position (async without blocking)
+              imageFiles.forEach((file) => {
+                fileToBase64(file)
+                  .then((base64) => {
+                    if (coordinates) {
+                      editor
+                        .chain()
+                        .setTextSelection(coordinates.pos)
+                        .setImage({ src: base64 })
+                        .run();
+                    } else {
+                      editor.chain().focus().setImage({ src: base64 }).run();
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error inserting image:", error);
+                  });
+              });
+
+              return true;
+            }
+          }
+
+          // Highlight the dropped block (for non-file drops)
           const targetElement = document.elementFromPoint(
             dragEvent.clientX,
             dragEvent.clientY
@@ -177,6 +242,37 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
               .elementFromPoint(dragEvent.clientX, dragEvent.clientY)
               ?.dispatchEvent(mouseEvent);
           }, 50);
+          return false;
+        },
+        paste: (_view, event) => {
+          const clipboardEvent = event as ClipboardEvent;
+          const items = clipboardEvent.clipboardData?.items;
+
+          if (items && editor) {
+            const imageItems = Array.from(items).filter((item) =>
+              item.type.startsWith("image/")
+            );
+
+            if (imageItems.length > 0) {
+              event.preventDefault();
+
+              imageItems.forEach((item) => {
+                const file = item.getAsFile();
+                if (file) {
+                  fileToBase64(file)
+                    .then((base64) => {
+                      editor.chain().focus().setImage({ src: base64 }).run();
+                    })
+                    .catch((error) => {
+                      console.error("Error pasting image:", error);
+                    });
+                }
+              });
+
+              return true;
+            }
+          }
+
           return false;
         },
       },
@@ -251,6 +347,28 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     input.click();
   }, [editor]);
 
+  // Handler for Import Image button
+  const handleImportImage = useCallback(() => {
+    if (!editor) return;
+    // Open file dialog for images
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file && isImageFile(file)) {
+        try {
+          const base64 = await fileToBase64(file);
+          editor.chain().focus().setImage({ src: base64 }).run();
+        } catch (error) {
+          console.error("Error importing image:", error);
+          alert("Failed to import image. Please try again.");
+        }
+      }
+    };
+    input.click();
+  }, [editor]);
+
   // Handler for toolbar import
   const handleToolbarImport = useCallback(
     async (file: File) => {
@@ -292,6 +410,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
         onCreateTodo={handleCreateTodo}
         onTemplates={handleTemplates}
         onImport={handleImport}
+        onImportImage={handleImportImage}
       />
     </div>
   );
