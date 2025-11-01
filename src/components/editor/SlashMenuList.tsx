@@ -1,11 +1,6 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
-import { SlashCommandItem } from '@/extensions/slash/SlashCommandExtension';
-import { KeyboardShortcut } from '@/components/ui/keyboard-shortcut';
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { SlashCommandItem } from "@/extensions/slash/SlashCommandExtension";
+import { KeyboardShortcut } from "@/components/ui/keyboard-shortcut";
 
 export interface SlashMenuListProps {
   items: SlashCommandItem[];
@@ -45,17 +40,17 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
 
     useImperativeHandle(ref, () => ({
       onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-        if (event.key === 'ArrowUp') {
+        if (event.key === "ArrowUp") {
           upHandler();
           return true;
         }
 
-        if (event.key === 'ArrowDown') {
+        if (event.key === "ArrowDown") {
           downHandler();
           return true;
         }
 
-        if (event.key === 'Enter') {
+        if (event.key === "Enter") {
           enterHandler();
           return true;
         }
@@ -66,46 +61,52 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
 
     if (props.items.length === 0) {
       return (
-        <div 
+        <div
           className="rounded-md border bg-popover text-popover-foreground shadow-md p-2"
-          style={{ fontFamily: 'Inter, sans-serif' }}
+          style={{ fontFamily: "Inter, sans-serif" }}
         >
-          <div className="px-3 py-2 text-sm text-muted-foreground">No results</div>
+          <div className="px-3 py-2 text-sm text-muted-foreground">
+            No results
+          </div>
         </div>
       );
     }
 
     return (
-      <div 
+      <div
         className="rounded-md border bg-popover text-popover-foreground shadow-md p-2 min-w-[360px]"
-        style={{ fontFamily: 'Inter, sans-serif' }}
+        style={{ fontFamily: "Inter, sans-serif" }}
       >
         {props.items.map((item, index) => (
           <button
             key={index}
             className={`flex items-center gap-3 w-full px-3 py-2 rounded-md text-left transition-colors ${
-              index === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent hover:text-accent-foreground'
+              index === selectedIndex
+                ? "bg-accent text-accent-foreground"
+                : "hover:bg-accent hover:text-accent-foreground"
             }`}
             onClick={() => selectItem(index)}
             type="button"
-            style={{ fontFamily: 'Inter, sans-serif' }}
+            style={{ fontFamily: "Inter, sans-serif" }}
           >
             <span className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-foreground font-semibold shrink-0">
               {item.icon}
             </span>
             <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-              <div 
+              <div
                 className="text-sm font-medium"
-                style={{ 
-                  fontWeight: 500, 
-                  fontSize: '14px', 
-                  lineHeight: '20px', 
-                  letterSpacing: '0.1px' 
+                style={{
+                  fontWeight: 500,
+                  fontSize: "14px",
+                  lineHeight: "20px",
+                  letterSpacing: "0.1px",
                 }}
               >
                 {item.title}
               </div>
-              <div className="text-xs text-muted-foreground">{item.description}</div>
+              <div className="text-xs text-muted-foreground">
+                {item.description}
+              </div>
             </div>
             {item.shortcut && (
               <div className="ml-auto shrink-0">
@@ -119,5 +120,4 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
   }
 );
 
-SlashMenuList.displayName = 'SlashMenuList';
-
+SlashMenuList.displayName = "SlashMenuList";

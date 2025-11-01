@@ -45,11 +45,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
   const imageInputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
 
-  // Keyboard shortcut handler
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      // Only trigger if Ctrl/Cmd+K is pressed
-      // Skip if typing in an input/textarea or if command dialog input is focused
       if (
         e.key === "k" &&
         (e.metaKey || e.ctrlKey) &&
@@ -88,7 +85,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
     const file = e.target.files?.[0];
     if (file) {
       onImport(file);
-      // Reset input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -118,7 +114,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
       };
       reader.readAsDataURL(file);
     }
-    // Reset input
     if (imageInputRef.current) {
       imageInputRef.current.value = "";
     }
@@ -354,7 +349,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
         </CommandList>
       </CommandDialog>
 
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -363,7 +357,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
         style={{ display: "none" }}
         aria-label="Import file"
       />
-      {/* Hidden image input */}
       <input
         ref={imageInputRef}
         type="file"

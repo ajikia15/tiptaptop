@@ -4,17 +4,11 @@ import { ChainedCommands } from '@tiptap/core';
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     createTodo: {
-      /**
-       * Insert a to-do list
-       */
       insertTodoList: () => ReturnType;
     };
   }
 }
 
-/**
- * Custom extension that adds a command to insert a to-do list
- */
 export const CreateTodoExtension = Extension.create({
   name: 'createTodo',
 

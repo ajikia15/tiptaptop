@@ -5,10 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/**
- * Detect if the current platform is macOS
- * More reliable than checking user agent strings
- */
 export function isMac(): boolean {
   return (
     typeof window !== "undefined" &&
@@ -16,9 +12,6 @@ export function isMac(): boolean {
   )
 }
 
-/**
- * Check if a keyboard event matches a modifier key combination
- */
 export function isModifierKey(
   event: KeyboardEvent,
   key: string,
@@ -50,9 +43,6 @@ export function isModifierKey(
   )
 }
 
-/**
- * Convert file to base64 data URL
- */
 export function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -66,9 +56,6 @@ export function fileToBase64(file: File): Promise<string> {
   })
 }
 
-/**
- * Check if file is an image
- */
 export function isImageFile(file: File): boolean {
   return file.type.startsWith("image/")
 }

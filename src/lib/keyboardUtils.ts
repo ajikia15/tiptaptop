@@ -1,10 +1,5 @@
 import { isMac } from "./utils"
 
-/**
- * Parse a shortcut string into individual keys
- * @param shortcut - Shortcut string with Mac symbols (⌘, ⌥, ⇧) or regular format
- * @returns Array of key strings
- */
 export function parseShortcutKeys(shortcut: string): string[] {
   const keys: string[] = []
   let currentKey = ""
@@ -22,7 +17,6 @@ export function parseShortcutKeys(shortcut: string): string[] {
         keys.push(currentKey)
         currentKey = ""
       }
-      // Skip separator characters
     } else {
       currentKey += char
     }
@@ -35,9 +29,6 @@ export function parseShortcutKeys(shortcut: string): string[] {
   return keys
 }
 
-/**
- * Convert Mac symbols to platform-appropriate display text
- */
 export function formatKeyForPlatform(key: string): string {
   if (isMac()) {
     return key
@@ -45,10 +36,6 @@ export function formatKeyForPlatform(key: string): string {
   return key.replace(/⌘/g, "Ctrl").replace(/⌥/g, "Alt").replace(/⇧/g, "Shift")
 }
 
-/**
- * Format a shortcut string for display (returns plain string, not React node)
- * Useful for simple text display without keyboard component styling
- */
 export function formatShortcut(shortcut: string): string {
   if (isMac()) {
     return shortcut
@@ -60,9 +47,6 @@ export function formatShortcut(shortcut: string): string {
     .replace(/\+/g, "+")
 }
 
-/**
- * Check if event target is an input element that should not trigger shortcuts
- */
 export function shouldIgnoreKeyboardShortcut(
   target: EventTarget | null
 ): boolean {

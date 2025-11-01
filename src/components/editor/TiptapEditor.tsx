@@ -261,62 +261,52 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
       },
     },
     onUpdate: ({ editor }) => {
-      // Debounced console logging
       debouncedLog(editor);
 
-      // Call optional update handler
       if (onUpdate) {
         onUpdate(editor);
       }
     },
   });
 
-  // Handler for Ask AI button
   const handleAskAI = useCallback(() => {
     if (editor) {
       editor.commands.askAI();
     }
   }, [editor]);
 
-  // Handler for Make Research button
   const handleMakeResearch = useCallback(() => {
     if (editor) {
       editor.commands.makeResearch();
     }
   }, [editor]);
 
-  // Handler for Create To-Do List button
   const handleCreateTodo = useCallback(() => {
     if (editor) {
       editor.commands.insertTodoList();
     }
   }, [editor]);
 
-  // Keyboard shortcuts for AI prompts
   useEffect(() => {
     if (!editor) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Skip if typing in an input/textarea or title field
       if (shouldIgnoreKeyboardShortcut(e.target)) {
         return;
       }
 
-      // Ask AI: Ctrl/Cmd + Shift + J
       if (isModifierKey(e, "j", { shift: true })) {
         e.preventDefault();
         handleAskAI();
         return;
       }
 
-      // Make Research: Ctrl/Cmd + Shift + M
       if (isModifierKey(e, "m", { shift: true })) {
         e.preventDefault();
         handleMakeResearch();
         return;
       }
 
-      // Create Todo: Ctrl/Cmd + Shift + D
       if (isModifierKey(e, "d", { shift: true })) {
         e.preventDefault();
         handleCreateTodo();
@@ -330,25 +320,19 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     };
   }, [editor, handleAskAI, handleMakeResearch, handleCreateTodo]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       editor?.destroy();
     };
   }, [editor]);
 
-  // Handler for Templates button
   const handleTemplates = useCallback(() => {
     if (editor) {
-      // For the starter overlay, we'll just insert the first template as an example
-      // The toolbar dropdown will handle specific templates
       editor.commands.insertTemplate("brief");
     }
   }, [editor]);
 
-  // Handler for Import button
   const handleImport = useCallback(() => {
-    // Open file dialog
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".txt,.docx";
@@ -426,7 +410,6 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
           className="text-4xl font-bold text-gray-900 outline-none border-none focus:outline-none"
           onInput={(e) => {
             const target = e.currentTarget;
-            // Remove the placeholder when user types
             if (
               target.textContent &&
               !target.classList.contains("has-content")

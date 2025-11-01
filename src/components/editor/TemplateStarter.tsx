@@ -32,7 +32,6 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
 }) => {
   const [isEmpty, setIsEmpty] = useState(true);
 
-  // Check if editor is empty whenever it updates
   useEffect(() => {
     if (!editor) return;
 
@@ -40,10 +39,8 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
       setIsEmpty(isEditorEmpty(editor));
     };
 
-    // Check initial state
     updateEmptyState();
 
-    // Listen to editor updates
     editor.on("update", updateEmptyState);
     editor.on("selectionUpdate", updateEmptyState);
 
@@ -53,7 +50,6 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
     };
   }, [editor]);
 
-  // Don't render if editor has content
   if (!isEmpty) {
     return null;
   }
@@ -61,7 +57,6 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
   return (
     <div className="action-list-wrapper">
       <div className="flex flex-col gap-4 max-w-md">
-        {/* AI Prompts & shortcuts */}
         <div className="flex flex-col gap-1">
           <div 
             className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider"
@@ -136,7 +131,6 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
           </button>
         </div>
 
-        {/* Other options */}
         <div className="flex flex-col gap-1">
           <div 
             className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider"

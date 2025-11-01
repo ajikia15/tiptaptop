@@ -4,7 +4,6 @@ import templateBrief from "@/templates/template-brief.json";
 import templateOutline from "@/templates/template-outline.json";
 import templateNotes from "@/templates/template-notes.json";
 
-// Zod schema for validating template structure
 const TemplateSchema = z.object({
   type: z.literal("doc"),
   content: z.array(z.any()),
@@ -49,7 +48,6 @@ export const TemplatesExtension = Extension.create({
               .insertContent(validatedTemplate.content)
               .run();
 
-            // Focus at the beginning of the document
             setTimeout(() => {
               editor.commands.focus("start");
             }, 10);
