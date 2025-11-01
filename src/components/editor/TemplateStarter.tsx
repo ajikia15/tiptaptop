@@ -1,6 +1,13 @@
 import React from "react";
 import { Editor } from "@tiptap/core";
-import { Sparkles, Search, CheckSquare, FileText, Upload } from "lucide-react";
+import {
+  AskAIIcon,
+  MakeResearchIcon,
+  TodoListIcon,
+  TemplatesIcon,
+  ImportIcon,
+  ImportImageIcon,
+} from "@/components/ui/icon";
 
 interface TemplateStarterProps {
   editor: Editor;
@@ -9,6 +16,7 @@ interface TemplateStarterProps {
   onCreateTodo: () => void;
   onTemplates: () => void;
   onImport: () => void;
+  onImportImage: () => void;
 }
 
 export const TemplateStarter: React.FC<TemplateStarterProps> = ({
@@ -17,6 +25,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
   onCreateTodo,
   onTemplates,
   onImport,
+  onImportImage,
 }) => {
   return (
     <div className="action-list-wrapper">
@@ -44,7 +53,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <Sparkles className="w-4 h-4" />
+            <AskAIIcon className="w-4 h-4" />
             <span>Ask AI</span>
           </button>
 
@@ -60,7 +69,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <Search className="w-4 h-4" />
+            <MakeResearchIcon className="w-4 h-4" />
             <span>Make Research</span>
           </button>
 
@@ -76,7 +85,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <CheckSquare className="w-4 h-4" />
+            <TodoListIcon className="w-4 h-4" />
             <span>Create To-Do List</span>
           </button>
         </div>
@@ -104,7 +113,7 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <FileText className="w-4 h-4" />
+            <TemplatesIcon className="w-4 h-4" />
             <span>Templates</span>
           </button>
 
@@ -120,8 +129,24 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
               verticalAlign: 'middle'
             }}
           >
-            <Upload className="w-4 h-4" />
+            <ImportIcon className="w-4 h-4" />
             <span>Import</span>
+          </button>
+
+          <button
+            onClick={onImportImage}
+            className="flex items-center gap-3 px-3 py-2 text-left text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            style={{
+              fontFamily: 'Inter',
+              fontWeight: 500,
+              fontSize: '14px',
+              lineHeight: '20px',
+              letterSpacing: '0.1px',
+              verticalAlign: 'middle'
+            }}
+          >
+            <ImportImageIcon className="w-4 h-4" />
+            <span>Import Image</span>
           </button>
         </div>
       </div>

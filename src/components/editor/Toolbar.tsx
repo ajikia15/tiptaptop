@@ -22,12 +22,15 @@ import {
   Heading3,
   List,
   ListOrdered,
-  CheckSquare,
-  Sparkles,
-  Search as SearchIcon,
-  FileText,
-  Upload,
 } from "lucide-react";
+import {
+  AskAIIcon,
+  MakeResearchIcon,
+  TodoListIcon,
+  TemplatesIcon,
+  ImportIcon,
+  ImportImageIcon,
+} from "@/components/ui/icon";
 import { TemplateName } from "@/extensions/templates/TemplatesExtension";
 
 interface ToolbarProps {
@@ -37,6 +40,7 @@ interface ToolbarProps {
 
 export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const imageInputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
 
   // Helper function to detect Mac
@@ -100,6 +104,31 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
     fileInputRef.current?.click();
   };
 
+  const handleImportImageClick = () => {
+    imageInputRef.current?.click();
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        editor.chain().focus().setImage({ src: base64 }).run();
+      };
+      reader.onerror = () => {
+        console.error("Error reading image file");
+        alert("Failed to import image. Please try again.");
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+    setOpen(false);
+  };
+
   return (
     <>
       <div className="editor-toolbar-minimal">
@@ -137,15 +166,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
           {/* AI Prompts & shortcuts */}
           <CommandGroup heading="AI Prompts & shortcuts">
             <CommandItem onSelect={handleAskAI}>
-              <Sparkles />
+              <AskAIIcon className="w-4 h-4" />
               <span>Ask AI</span>
             </CommandItem>
             <CommandItem onSelect={handleMakeResearch}>
-              <SearchIcon />
+              <MakeResearchIcon className="w-4 h-4" />
               <span>Make Research</span>
             </CommandItem>
             <CommandItem onSelect={handleCreateTodo}>
-              <CheckSquare />
+              <TodoListIcon className="w-4 h-4" />
               <span>Create To-Do List</span>
             </CommandItem>
           </CommandGroup>
@@ -250,24 +279,28 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
             <CommandItem
               onSelect={() => handleInsertTemplate("brief")}
             >
-              <FileText />
+              <TemplatesIcon className="w-4 h-4" />
               <span>Project Brief Template</span>
             </CommandItem>
             <CommandItem
               onSelect={() => handleInsertTemplate("outline")}
             >
-              <FileText />
+              <TemplatesIcon className="w-4 h-4" />
               <span>Document Outline Template</span>
             </CommandItem>
             <CommandItem
               onSelect={() => handleInsertTemplate("notes")}
             >
-              <FileText />
+              <TemplatesIcon className="w-4 h-4" />
               <span>Meeting Notes Template</span>
             </CommandItem>
             <CommandItem onSelect={handleImportClick}>
-              <Upload />
+              <ImportIcon className="w-4 h-4" />
               <span>Import Document</span>
+            </CommandItem>
+            <CommandItem onSelect={handleImportImageClick}>
+              <ImportImageIcon className="w-4 h-4" />
+              <span>Import Image</span>
             </CommandItem>
           </CommandGroup>
         </CommandList>
@@ -281,6 +314,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
         onChange={handleFileChange}
         style={{ display: "none" }}
         aria-label="Import file"
+      />
+      {/* Hidden image input */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        style={{ display: "none" }}
+        aria-label="Import image"
       />
     </>
   );

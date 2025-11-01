@@ -347,6 +347,28 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     input.click();
   }, [editor]);
 
+  // Handler for Import Image button
+  const handleImportImage = useCallback(() => {
+    if (!editor) return;
+    // Open file dialog for images
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file && isImageFile(file)) {
+        try {
+          const base64 = await fileToBase64(file);
+          editor.chain().focus().setImage({ src: base64 }).run();
+        } catch (error) {
+          console.error("Error importing image:", error);
+          alert("Failed to import image. Please try again.");
+        }
+      }
+    };
+    input.click();
+  }, [editor]);
+
   // Handler for toolbar import
   const handleToolbarImport = useCallback(
     async (file: File) => {
@@ -388,6 +410,7 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
         onCreateTodo={handleCreateTodo}
         onTemplates={handleTemplates}
         onImport={handleImport}
+        onImportImage={handleImportImage}
       />
     </div>
   );
