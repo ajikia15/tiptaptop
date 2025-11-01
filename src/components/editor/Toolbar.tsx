@@ -216,6 +216,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
                   onClick={handleAskAI}
                   className="gap-2"
                   aria-label="Ask AI"
+                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                 >
                   <Sparkles className="w-4 h-4" />
                   <span className="hidden sm:inline">Ask AI</span>
@@ -226,6 +227,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
                   onClick={handleMakeResearch}
                   className="gap-2"
                   aria-label="Make Research"
+                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                 >
                   <Search className="w-4 h-4" />
                   <span className="hidden sm:inline">Research</span>
@@ -238,24 +240,28 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
                       size="sm"
                       className="gap-2"
                       aria-label="Templates"
+                      style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                     >
                       <FileText className="w-4 h-4" />
                       <span className="hidden sm:inline">Templates</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
+                  <DropdownMenuContent align="start" style={{ fontFamily: 'Inter, sans-serif' }}>
                     <DropdownMenuItem
                       onClick={() => handleInsertTemplate("brief")}
+                      style={{ fontWeight: 500, fontSize: '14px', letterSpacing: '0.1px' }}
                     >
                       Project Brief
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleInsertTemplate("outline")}
+                      style={{ fontWeight: 500, fontSize: '14px', letterSpacing: '0.1px' }}
                     >
                       Document Outline
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleInsertTemplate("notes")}
+                      style={{ fontWeight: 500, fontSize: '14px', letterSpacing: '0.1px' }}
                     >
                       Meeting Notes
                     </DropdownMenuItem>
@@ -268,6 +274,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
                   onClick={handleImportClick}
                   className="gap-2"
                   aria-label="Import"
+                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
                 >
                   <Upload className="w-4 h-4" />
                   <span className="hidden sm:inline">Import</span>

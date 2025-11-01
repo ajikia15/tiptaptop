@@ -65,14 +65,20 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
 
     if (props.items.length === 0) {
       return (
-        <div className="rounded-md border bg-popover text-popover-foreground shadow-md p-2">
+        <div 
+          className="rounded-md border bg-popover text-popover-foreground shadow-md p-2"
+          style={{ fontFamily: 'Inter, sans-serif' }}
+        >
           <div className="px-3 py-2 text-sm text-muted-foreground">No results</div>
         </div>
       );
     }
 
     return (
-      <div className="rounded-md border bg-popover text-popover-foreground shadow-md p-2 min-w-[280px]">
+      <div 
+        className="rounded-md border bg-popover text-popover-foreground shadow-md p-2 min-w-[280px]"
+        style={{ fontFamily: 'Inter, sans-serif' }}
+      >
         {props.items.map((item, index) => (
           <button
             key={index}
@@ -81,12 +87,23 @@ export const SlashMenuList = forwardRef<SlashMenuListRef, SlashMenuListProps>(
             }`}
             onClick={() => selectItem(index)}
             type="button"
+            style={{ fontFamily: 'Inter, sans-serif' }}
           >
             <span className="flex items-center justify-center w-8 h-8 rounded-md bg-muted text-foreground font-semibold flex-shrink-0">
               {item.icon}
             </span>
             <div className="flex flex-col gap-0.5 flex-1">
-              <div className="text-sm font-medium">{item.title}</div>
+              <div 
+                className="text-sm font-medium"
+                style={{ 
+                  fontWeight: 500, 
+                  fontSize: '14px', 
+                  lineHeight: '20px', 
+                  letterSpacing: '0.1px' 
+                }}
+              >
+                {item.title}
+              </div>
               <div className="text-xs text-muted-foreground">{item.description}</div>
             </div>
           </button>

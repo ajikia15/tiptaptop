@@ -86,6 +86,69 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
         "aria-label": "Text editor",
         "aria-multiline": "true",
       },
+      handleDOMEvents: {
+        dragstart: () => {
+          document.body.classList.add("is-dragging");
+          // Forcefully hide all tippy boxes immediately
+          document.querySelectorAll(".tippy-box").forEach((el) => {
+            const box = el as HTMLElement;
+            box.style.display = "none";
+          });
+          editor?.commands.lockDragHandle();
+          return false;
+        },
+        dragend: (_view, event) => {
+          const dragEvent = event as DragEvent;
+          // Remove dragging class and restore tippy visibility
+          document.body.classList.remove("is-dragging");
+          document.querySelectorAll(".tippy-box").forEach((el) => {
+            const box = el as HTMLElement;
+            box.style.display = "";
+          });
+
+          // Unlock and force position refresh with actual mouse coordinates
+          editor?.commands.unlockDragHandle();
+
+          // Dispatch mousemove at drop position to trigger handle recalculation
+          setTimeout(() => {
+            const mouseEvent = new MouseEvent("mousemove", {
+              bubbles: true,
+              cancelable: true,
+              clientX: dragEvent.clientX,
+              clientY: dragEvent.clientY,
+              view: window,
+            });
+            document
+              .elementFromPoint(dragEvent.clientX, dragEvent.clientY)
+              ?.dispatchEvent(mouseEvent);
+          }, 50);
+          return false;
+        },
+        drop: (_view, event) => {
+          const dragEvent = event as DragEvent;
+          document.body.classList.remove("is-dragging");
+          document.querySelectorAll(".tippy-box").forEach((el) => {
+            const box = el as HTMLElement;
+            box.style.display = "";
+          });
+
+          editor?.commands.unlockDragHandle();
+
+          setTimeout(() => {
+            const mouseEvent = new MouseEvent("mousemove", {
+              bubbles: true,
+              cancelable: true,
+              clientX: dragEvent.clientX,
+              clientY: dragEvent.clientY,
+              view: window,
+            });
+            document
+              .elementFromPoint(dragEvent.clientX, dragEvent.clientY)
+              ?.dispatchEvent(mouseEvent);
+          }, 50);
+          return false;
+        },
+      },
     },
     onUpdate: ({ editor }) => {
       // Debounced console logging
