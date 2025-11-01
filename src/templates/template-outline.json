@@ -1,0 +1,54 @@
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "heading",
+      "attrs": { "level": 1 },
+      "content": [{ "type": "text", "text": "Document Outline" }]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 2 },
+      "content": [{ "type": "text", "text": "1. Introduction" }]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        { "type": "text", "text": "Brief introduction to the topic..." }
+      ]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 2 },
+      "content": [{ "type": "text", "text": "2. Main Content" }]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 3 },
+      "content": [{ "type": "text", "text": "2.1 Section A" }]
+    },
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "Content for section A..." }]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 3 },
+      "content": [{ "type": "text", "text": "2.2 Section B" }]
+    },
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "Content for section B..." }]
+    },
+    {
+      "type": "heading",
+      "attrs": { "level": 2 },
+      "content": [{ "type": "text", "text": "3. Conclusion" }]
+    },
+    {
+      "type": "paragraph",
+      "content": [{ "type": "text", "text": "Summary and final thoughts..." }]
+    }
+  ]
+}
+
