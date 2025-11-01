@@ -11,13 +11,25 @@ import { TemplateStarter } from "./TemplateStarter";
 import { AskAiExtension } from "@/extensions/ask-ai/AskAiExtension";
 import { MakeResearchExtension } from "@/extensions/make-research/MakeResearchExtension";
 import { CreateTodoExtension } from "@/extensions/todo/CreateTodoExtension";
-import { TemplatesExtension } from "@/extensions/templates/TemplatesExtension";
+import {
+  TemplatesExtension,
+  TemplateName,
+} from "@/extensions/templates/TemplatesExtension";
 import { SlashCommandExtension } from "@/extensions/slash/SlashCommandExtension";
 import { SmartPlaceholder } from "@/extensions/placeholder/SmartPlaceholder";
 import { debounce, logEditorContent } from "@/lib/editorUtils";
 import { importDocument } from "@/lib/documentParser";
 import { fileToBase64, isImageFile, isModifierKey } from "@/lib/utils";
 import { shouldIgnoreKeyboardShortcut } from "@/lib/keyboardUtils";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { TEMPLATES } from "@/lib/templates";
+import { TemplateCard } from "./TemplateCard";
 import "@/styles/editor.scss";
 import "tippy.js/dist/tippy.css";
 
@@ -349,11 +361,21 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
     };
   }, [editor]);
 
+  const [templatesOpen, setTemplatesOpen] = React.useState(false);
+
   const handleTemplates = useCallback(() => {
-    if (editor) {
-      editor.commands.insertTemplate("brief");
-    }
-  }, [editor]);
+    setTemplatesOpen(true);
+  }, []);
+
+  const handleSelectTemplate = useCallback(
+    (templateName: TemplateName) => {
+      if (editor) {
+        editor.commands.insertTemplate(templateName);
+      }
+      setTemplatesOpen(false);
+    },
+    [editor]
+  );
 
   const handleImport = useCallback(() => {
     const input = document.createElement("input");
@@ -481,6 +503,29 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
         onImport={handleImport}
         onImportImage={handleImportImage}
       />
+
+      <Sheet open={templatesOpen} onOpenChange={setTemplatesOpen}>
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-[540px] overflow-y-auto"
+        >
+          <SheetHeader>
+            <SheetTitle>Choose a template</SheetTitle>
+            <SheetDescription>
+              Select a template to get started with a pre-formatted document.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="grid gap-3 py-6">
+            {TEMPLATES.map((template) => (
+              <TemplateCard
+                key={template.id}
+                template={template}
+                onSelect={handleSelectTemplate}
+              />
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
