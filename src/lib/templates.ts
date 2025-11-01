@@ -21,8 +21,7 @@ export const TEMPLATES: TemplateConfig[] = [
   {
     id: "outline",
     name: "Document Outline",
-    description:
-      "Organize your document with a hierarchical outline structure",
+    description: "Organize your document with a hierarchical outline structure",
     content: templateOutline,
   },
   {
@@ -33,4 +32,3 @@ export const TEMPLATES: TemplateConfig[] = [
     content: templateNotes,
   },
 ];
-

@@ -31,16 +31,20 @@ import {
   ImportIcon,
   ImportImageIcon,
 } from "@/components/ui/icon";
-import { TemplateName } from "@/extensions/templates/TemplatesExtension";
 import { isMac } from "@/lib/utils";
 import { shouldIgnoreKeyboardShortcut } from "@/lib/keyboardUtils";
 
 interface ToolbarProps {
   editor: Editor;
   onImport: (file: File) => void;
+  onOpenTemplates: () => void;
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({
+  editor,
+  onImport,
+  onOpenTemplates,
+}) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const imageInputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
@@ -76,10 +80,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
     setOpen(false);
   };
 
-  const handleInsertTemplate = (templateName: TemplateName) => {
-    editor.commands.insertTemplate(templateName);
-    setOpen(false);
-  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -302,30 +302,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
           <CommandGroup heading="Other options">
             <CommandItem
               onSelect={() => {
-                handleInsertTemplate("brief");
+                onOpenTemplates();
                 setOpen(false);
               }}
             >
               <TemplatesIcon className="w-4 h-4" />
-              <span>Project Brief Template</span>
-            </CommandItem>
-            <CommandItem
-              onSelect={() => {
-                handleInsertTemplate("outline");
-                setOpen(false);
-              }}
-            >
-              <TemplatesIcon className="w-4 h-4" />
-              <span>Document Outline Template</span>
-            </CommandItem>
-            <CommandItem
-              onSelect={() => {
-                handleInsertTemplate("notes");
-                setOpen(false);
-              }}
-            >
-              <TemplatesIcon className="w-4 h-4" />
-              <span>Meeting Notes Template</span>
+              <span>Templates</span>
             </CommandItem>
             <CommandItem
               onSelect={() => {
