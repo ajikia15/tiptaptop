@@ -21,6 +21,11 @@
     padding-left: calc(2.25rem + 1.5rem);
   }
 
+  /* Task lists should only have gutter, no extra indent */
+  > ul[data-type="taskList"] {
+    padding-left: 2.25rem;
+  }
+
   /* Blockquote already has left padding; add gutter on top */
   > blockquote {
     padding-left: calc(2.25rem + 1rem);
@@ -149,7 +154,6 @@
   /* Task List */
   ul[data-type='taskList'] {
     list-style: none;
-    padding-left: 0;
 
     li {
       display: flex;
@@ -189,12 +193,14 @@
   pre {
     background-color: hsl(var(--muted));
     border-radius: 0.5rem;
-    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
     overflow-x: auto;
 
     code {
       background: none;
-      padding: 0;
+      color: inherit;
+      padding: 0.75rem 1rem;
+      display: block;
       font-size: 0.875rem;
     }
   }
