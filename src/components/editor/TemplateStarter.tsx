@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Editor } from "@tiptap/core";
 import {
   AskAIIcon,
@@ -9,6 +9,7 @@ import {
   ImportImageIcon,
 } from "@/components/ui/icon";
 import { KeyboardShortcut } from "@/components/ui/keyboard-shortcut";
+import { isEditorEmpty } from "@/lib/editorUtils";
 
 interface TemplateStarterProps {
   editor: Editor;
@@ -21,6 +22,7 @@ interface TemplateStarterProps {
 }
 
 export const TemplateStarter: React.FC<TemplateStarterProps> = ({
+  editor,
   onAskAI,
   onMakeResearch,
   onCreateTodo,
@@ -28,6 +30,33 @@ export const TemplateStarter: React.FC<TemplateStarterProps> = ({
   onImport,
   onImportImage,
 }) => {
+  const [isEmpty, setIsEmpty] = useState(true);
+
+  // Check if editor is empty whenever it updates
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateEmptyState = () => {
+      setIsEmpty(isEditorEmpty(editor));
+    };
+
+    // Check initial state
+    updateEmptyState();
+
+    // Listen to editor updates
+    editor.on("update", updateEmptyState);
+    editor.on("selectionUpdate", updateEmptyState);
+
+    return () => {
+      editor.off("update", updateEmptyState);
+      editor.off("selectionUpdate", updateEmptyState);
+    };
+  }, [editor]);
+
+  // Don't render if editor has content
+  if (!isEmpty) {
+    return null;
+  }
 
   return (
     <div className="action-list-wrapper">
