@@ -34,7 +34,30 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
 }) => {
   const titleRef = React.useRef<HTMLDivElement>(null);
 
-  // Create debounced logger
+  const updateDocumentTitle = useCallback((title: string) => {
+    const trimmedTitle = title.trim();
+    if (trimmedTitle) {
+      document.title = trimmedTitle;
+    } else {
+      document.title = "Tiptap Editor";
+    }
+  }, []);
+
+  const debouncedUpdateTitle = useMemo(
+    () => debounce((title: string) => updateDocumentTitle(title), 300),
+    [updateDocumentTitle]
+  );
+
+  useEffect(() => {
+    document.title = "Tiptap Editor";
+    if (titleRef.current) {
+      const initialTitle = titleRef.current.textContent || "";
+      if (initialTitle.trim()) {
+        debouncedUpdateTitle(initialTitle);
+      }
+    }
+  }, [debouncedUpdateTitle]);
+
   const debouncedLog = useMemo(
     () =>
       debounce((editor: Editor) => {
@@ -410,6 +433,8 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
           className="text-4xl font-bold text-gray-900 outline-none border-none focus:outline-none"
           onInput={(e) => {
             const target = e.currentTarget;
+            const title = target.textContent || "";
+            debouncedUpdateTitle(title);
             if (
               target.textContent &&
               !target.classList.contains("has-content")
@@ -422,6 +447,9 @@ export const TiptapEditor: React.FC<TiptapEditorProps> = ({
             if (!target.textContent || target.textContent.trim() === "") {
               target.textContent = "";
               target.classList.remove("has-content");
+              debouncedUpdateTitle("");
+            } else {
+              debouncedUpdateTitle(target.textContent);
             }
           }}
           onKeyDown={(e) => {
