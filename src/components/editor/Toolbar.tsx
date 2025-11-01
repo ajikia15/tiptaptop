@@ -2,16 +2,16 @@ import React from "react";
 import { Editor } from "@tiptap/core";
 import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
   Bold,
   Italic,
@@ -24,10 +24,9 @@ import {
   ListOrdered,
   CheckSquare,
   Sparkles,
-  Search,
+  Search as SearchIcon,
   FileText,
   Upload,
-  MoreHorizontal,
 } from "lucide-react";
 import { TemplateName } from "@/extensions/templates/TemplatesExtension";
 
@@ -38,21 +37,51 @@ interface ToolbarProps {
 
 export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [open, setOpen] = React.useState(false);
+
+  // Helper function to detect Mac
+  const isMac = () => {
+    return typeof window !== "undefined" && window.navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+  };
+
+  // Keyboard shortcut handler
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      // Only trigger if Ctrl/Cmd+K is pressed
+      // Skip if typing in an input/textarea or if command dialog input is focused
+      if (
+        e.key === "k" &&
+        (e.metaKey || e.ctrlKey) &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target instanceof HTMLTextAreaElement)
+      ) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   const handleAskAI = () => {
     editor.commands.askAI();
+    setOpen(false);
   };
 
   const handleMakeResearch = () => {
     editor.commands.makeResearch();
+    setOpen(false);
   };
 
   const handleCreateTodo = () => {
     editor.commands.insertTodoList();
+    setOpen(false);
   };
 
   const handleInsertTemplate = (templateName: TemplateName) => {
     editor.commands.insertTemplate(templateName);
+    setOpen(false);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +93,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
         fileInputRef.current.value = "";
       }
     }
+    setOpen(false);
   };
 
   const handleImportClick = () => {
@@ -73,217 +103,173 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, onImport }) => {
   return (
     <>
       <div className="editor-toolbar-minimal">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="toolbar-toggle"
-              aria-label="Toggle toolbar"
-            >
-              <MoreHorizontal className="w-5 h-5" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent align="start" side="bottom" className="w-auto p-3">
-            <div className="flex flex-wrap gap-2">
-              {/* Formatting Tools */}
-              <div className="toolbar-group">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleBold().run()}
-                  disabled={!editor.can().chain().focus().toggleBold().run()}
-                  className={editor.isActive("bold") ? "bg-accent" : ""}
-                  aria-label="Bold"
-                >
-                  <Bold className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
-                  disabled={!editor.can().chain().focus().toggleItalic().run()}
-                  className={editor.isActive("italic") ? "bg-accent" : ""}
-                  aria-label="Italic"
-                >
-                  <Italic className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleStrike().run()}
-                  disabled={!editor.can().chain().focus().toggleStrike().run()}
-                  className={editor.isActive("strike") ? "bg-accent" : ""}
-                  aria-label="Strikethrough"
-                >
-                  <Strikethrough className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleCode().run()}
-                  disabled={!editor.can().chain().focus().toggleCode().run()}
-                  className={editor.isActive("code") ? "bg-accent" : ""}
-                  aria-label="Code"
-                >
-                  <Code className="w-4 h-4" />
-                </Button>
-              </div>
-
-              {/* Headings */}
-              <div className="toolbar-group">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 1 }).run()
-                  }
-                  className={
-                    editor.isActive("heading", { level: 1 }) ? "bg-accent" : ""
-                  }
-                  aria-label="Heading 1"
-                >
-                  <Heading1 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 2 }).run()
-                  }
-                  className={
-                    editor.isActive("heading", { level: 2 }) ? "bg-accent" : ""
-                  }
-                  aria-label="Heading 2"
-                >
-                  <Heading2 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    editor.chain().focus().toggleHeading({ level: 3 }).run()
-                  }
-                  className={
-                    editor.isActive("heading", { level: 3 }) ? "bg-accent" : ""
-                  }
-                  aria-label="Heading 3"
-                >
-                  <Heading3 className="w-4 h-4" />
-                </Button>
-              </div>
-
-              {/* Lists */}
-              <div className="toolbar-group">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    editor.chain().focus().toggleBulletList().run()
-                  }
-                  className={editor.isActive("bulletList") ? "bg-accent" : ""}
-                  aria-label="Bullet List"
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    editor.chain().focus().toggleOrderedList().run()
-                  }
-                  className={editor.isActive("orderedList") ? "bg-accent" : ""}
-                  aria-label="Numbered List"
-                >
-                  <ListOrdered className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCreateTodo}
-                  className={editor.isActive("taskList") ? "bg-accent" : ""}
-                  aria-label="To-Do List"
-                >
-                  <CheckSquare className="w-4 h-4" />
-                </Button>
-              </div>
-
-              {/* Actions */}
-              <div className="toolbar-group">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleAskAI}
-                  className="gap-2"
-                  aria-label="Ask AI"
-                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span className="hidden sm:inline">Ask AI</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleMakeResearch}
-                  className="gap-2"
-                  aria-label="Make Research"
-                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
-                >
-                  <Search className="w-4 h-4" />
-                  <span className="hidden sm:inline">Research</span>
-                </Button>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="gap-2"
-                      aria-label="Templates"
-                      style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
-                    >
-                      <FileText className="w-4 h-4" />
-                      <span className="hidden sm:inline">Templates</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" style={{ fontFamily: 'Inter, sans-serif' }}>
-                    <DropdownMenuItem
-                      onClick={() => handleInsertTemplate("brief")}
-                      style={{ fontWeight: 500, fontSize: '14px', letterSpacing: '0.1px' }}
-                    >
-                      Project Brief
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleInsertTemplate("outline")}
-                      style={{ fontWeight: 500, fontSize: '14px', letterSpacing: '0.1px' }}
-                    >
-                      Document Outline
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleInsertTemplate("notes")}
-                      style={{ fontWeight: 500, fontSize: '14px', letterSpacing: '0.1px' }}
-                    >
-                      Meeting Notes
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleImportClick}
-                  className="gap-2"
-                  aria-label="Import"
-                  style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
-                >
-                  <Upload className="w-4 h-4" />
-                  <span className="hidden sm:inline">Import</span>
-                </Button>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="toolbar-toggle"
+          aria-label="Toggle command menu"
+          onClick={() => setOpen(true)}
+          style={{ fontFamily: 'Inter, sans-serif', fontWeight: 500 }}
+        >
+          <KbdGroup>
+            {isMac() ? (
+              <>
+                <Kbd>⌘</Kbd>
+                <Kbd>K</Kbd>
+              </>
+            ) : (
+              <>
+                <Kbd>Ctrl</Kbd>
+                <Kbd>K</Kbd>
+              </>
+            )}
+          </KbdGroup>
+        </Button>
       </div>
+
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput placeholder="Type a command or search..." />
+        <CommandList>
+          <CommandEmpty>No results found.</CommandEmpty>
+
+          {/* AI Prompts & shortcuts */}
+          <CommandGroup heading="AI Prompts & shortcuts">
+            <CommandItem onSelect={handleAskAI}>
+              <Sparkles />
+              <span>Ask AI</span>
+            </CommandItem>
+            <CommandItem onSelect={handleMakeResearch}>
+              <SearchIcon />
+              <span>Make Research</span>
+            </CommandItem>
+            <CommandItem onSelect={handleCreateTodo}>
+              <CheckSquare />
+              <span>Create To-Do List</span>
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandSeparator />
+
+          {/* Formatting */}
+          <CommandGroup heading="Formatting">
+            <CommandItem
+              onSelect={() => editor.chain().focus().toggleBold().run()}
+            >
+              <Bold />
+              <span>Bold</span>
+              <CommandShortcut>
+                {isMac() ? "⌘B" : "Ctrl+B"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => editor.chain().focus().toggleItalic().run()}
+            >
+              <Italic />
+              <span>Italic</span>
+              <CommandShortcut>
+                {isMac() ? "⌘I" : "Ctrl+I"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => editor.chain().focus().toggleStrike().run()}
+            >
+              <Strikethrough />
+              <span>Strikethrough</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⇧S" : "Ctrl+Shift+S"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => editor.chain().focus().toggleCode().run()}
+            >
+              <Code />
+              <span>Code</span>
+              <CommandShortcut>
+                {isMac() ? "⌘E" : "Ctrl+E"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                editor.chain().focus().toggleHeading({ level: 1 }).run()
+              }
+            >
+              <Heading1 />
+              <span>Heading 1</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⌥1" : "Ctrl+Alt+1"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+            >
+              <Heading2 />
+              <span>Heading 2</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⌥2" : "Ctrl+Alt+2"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                editor.chain().focus().toggleHeading({ level: 3 }).run()
+              }
+            >
+              <Heading3 />
+              <span>Heading 3</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⌥3" : "Ctrl+Alt+3"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => editor.chain().focus().toggleBulletList().run()}
+            >
+              <List />
+              <span>Bullet List</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⇧8" : "Ctrl+Shift+8"}
+              </CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => editor.chain().focus().toggleOrderedList().run()}
+            >
+              <ListOrdered />
+              <span>Numbered List</span>
+              <CommandShortcut>
+                {isMac() ? "⌘⇧7" : "Ctrl+Shift+7"}
+              </CommandShortcut>
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandSeparator />
+
+          {/* Other options */}
+          <CommandGroup heading="Other options">
+            <CommandItem
+              onSelect={() => handleInsertTemplate("brief")}
+            >
+              <FileText />
+              <span>Project Brief Template</span>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => handleInsertTemplate("outline")}
+            >
+              <FileText />
+              <span>Document Outline Template</span>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => handleInsertTemplate("notes")}
+            >
+              <FileText />
+              <span>Meeting Notes Template</span>
+            </CommandItem>
+            <CommandItem onSelect={handleImportClick}>
+              <Upload />
+              <span>Import Document</span>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
 
       {/* Hidden file input */}
       <input
